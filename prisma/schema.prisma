@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Record {
+  id          Int      @id
+  latitude    Float
+  longitude   Float
+  species     String
+  count       Int
+  behavior    String
+  observedAt  DateTime
+  mediaUrl    String?
+  comment     String?
+  reporter    String
+  blockNumber BigInt
+  txHash      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model IndexerState {
+  id        Int    @id @default(1)
+  lastBlock BigInt @default(0)
+}
