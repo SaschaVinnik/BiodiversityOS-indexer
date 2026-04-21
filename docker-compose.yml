@@ -16,7 +16,6 @@ services:
 
   app:
     build: .
-    image: ghcr.io/saschavinnik/biodiversityos-indexer:latest
     ports:
       - "127.0.0.1:4000:4000"
     env_file:
