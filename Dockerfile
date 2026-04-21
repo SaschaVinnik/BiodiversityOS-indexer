@@ -8,6 +8,10 @@ RUN npm ci
 
 COPY tsconfig.json ./
 COPY prisma/ ./prisma/
+
+# Generate Prisma client so TypeScript has the types during compilation
+RUN npx prisma generate
+
 COPY src/ ./src/
 
 RUN npm run build
