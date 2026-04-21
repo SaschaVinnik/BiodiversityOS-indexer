@@ -4,6 +4,7 @@ import prisma from "./db.js";
 import { REGISTRY_ABI } from "./abi.js";
 
 const POLL_INTERVAL_MS = 5_000;
+const MAX_BLOCK_RANGE = 5_000n;
 
 function parseCoord(value: bigint): number {
   return Number(value) / 1_000_000;
@@ -56,19 +57,31 @@ export async function startListener(contractAddress: `0x${string}`, rpcUrl: stri
       const from = state.lastBlock + 1n;
       if (from > latest) return;
 
-      const logs = await client.getLogs({
-        address: contractAddress,
-        events: REGISTRY_ABI as any,
-        fromBlock: from,
-        toBlock: latest,
-      });
+      // Fetch logs in chunks to stay within RPC block range limit
+      let chunkFrom = from;
+      let totalLogs = 0;
+      while (chunkFrom <= latest) {
+        const chunkTo = chunkFrom + MAX_BLOCK_RANGE - 1n < latest
+          ? chunkFrom + MAX_BLOCK_RANGE - 1n
+          : latest;
 
-      for (const log of logs) {
-        await processLog(log as any);
+        const logs = await client.getLogs({
+          address: contractAddress,
+          events: REGISTRY_ABI as any,
+          fromBlock: chunkFrom,
+          toBlock: chunkTo,
+        });
+
+        for (const log of logs) {
+          await processLog(log as any);
+        }
+
+        totalLogs += logs.length;
+        chunkFrom = chunkTo + 1n;
       }
 
-      if (logs.length > 0) {
-        console.log(`Processed ${logs.length} log(s) up to block ${latest}`);
+      if (totalLogs > 0) {
+        console.log(`Processed ${totalLogs} log(s) up to block ${latest}`);
       }
 
       state = await prisma.indexerState.update({
