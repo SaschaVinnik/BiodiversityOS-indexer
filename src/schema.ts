@@ -1,11 +1,32 @@
 export const typeDefs = /* GraphQL */ `
+  enum Species {
+    nurse_shark
+    caribbean_reef_shark
+    great_hammerhead_shark
+    hammerhead_shark
+    bull_shark
+    tiger_shark
+    whale_shark
+    unknown
+  }
+
+  enum Behavior {
+    feeding
+    migrating
+    resting
+    mating
+    hunting
+    stranded
+    unknown
+  }
+
   type Record {
     id: Int!
     latitude: Float!
     longitude: Float!
-    species: String!
+    species: Species!
     count: Int!
-    behavior: String!
+    behavior: Behavior!
     observedAt: String!
     mediaUrl: String
     comment: String
@@ -23,8 +44,8 @@ export const typeDefs = /* GraphQL */ `
   }
 
   input RecordsFilter {
-    species: String
-    behavior: String
+    species: Species
+    behavior: Behavior
     reporter: String
     observedAtGt: String
     observedAtLt: String

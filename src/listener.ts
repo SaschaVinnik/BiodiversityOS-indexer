@@ -2,6 +2,7 @@ import { createPublicClient, http, parseAbiItem, type Log } from "viem";
 import { celo } from "viem/chains";
 import prisma from "./db.js";
 import { REGISTRY_ABI } from "./abi.js";
+import { parseSpecies, parseBehavior } from "./types.js";
 
 const POLL_INTERVAL_MS = 5_000;
 const MAX_BLOCK_RANGE = 5_000n;
@@ -15,9 +16,9 @@ async function processLog(log: Log<bigint, number, false, typeof REGISTRY_ABI[0]
   const data = {
     latitude: parseCoord(args.latitude),
     longitude: parseCoord(args.longitude),
-    species: args.species as string,
+    species: parseSpecies(args.species as string),
     count: args.count as number,
-    behavior: args.behavior as string,
+    behavior: parseBehavior(args.behavior as string),
     observedAt: new Date(Number(args.observedAt) * 1000),
     mediaUrl: (args.mediaUrl as string) || null,
     comment: (args.comment as string) || null,
