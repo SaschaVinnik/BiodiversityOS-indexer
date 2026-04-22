@@ -48,7 +48,9 @@ export const typeDefs = /* GraphQL */ `
     behavior: Behavior
     reporter: String
     observedAtGt: String
+    observedAtGte: String
     observedAtLt: String
+    observedAtLte: String
   }
 
   type Query {

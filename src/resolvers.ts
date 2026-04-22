@@ -6,7 +6,9 @@ interface RecordsFilter {
   behavior?: string;
   reporter?: string;
   observedAtGt?: string;
+  observedAtGte?: string;
   observedAtLt?: string;
+  observedAtLte?: string;
 }
 
 function buildWhere(filter?: RecordsFilter): Prisma.RecordWhereInput {
@@ -15,10 +17,12 @@ function buildWhere(filter?: RecordsFilter): Prisma.RecordWhereInput {
   if (filter.species) where.species = filter.species;
   if (filter.behavior) where.behavior = filter.behavior;
   if (filter.reporter) where.reporter = filter.reporter.toLowerCase();
-  if (filter.observedAtGt || filter.observedAtLt) {
+  if (filter.observedAtGt || filter.observedAtGte || filter.observedAtLt || filter.observedAtLte) {
     where.observedAt = {};
-    if (filter.observedAtGt) where.observedAt.gt = new Date(filter.observedAtGt);
-    if (filter.observedAtLt) where.observedAt.lt = new Date(filter.observedAtLt);
+    if (filter.observedAtGt)  where.observedAt.gt  = new Date(filter.observedAtGt);
+    if (filter.observedAtGte) where.observedAt.gte = new Date(filter.observedAtGte);
+    if (filter.observedAtLt)  where.observedAt.lt  = new Date(filter.observedAtLt);
+    if (filter.observedAtLte) where.observedAt.lte = new Date(filter.observedAtLte);
   }
   return where;
 }
